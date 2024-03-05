@@ -12,12 +12,9 @@
 		<script src="https://cdn.tailwindcss.com"></script>
 	</head>
 	<body class="bg-neutral-50">
-		<div class="max-w-5xl mx-auto px-2 md:px-0">
+		<div class="max-w-5xl mx-auto px-2 lg:px-0">
 			<header class="w-full">
-				<nav
-					class="w-full flex items-center gap-2 justify-between p-4"
-					hx-target=".gallery-container"
-				>
+				<nav class="w-full flex items-center gap-2 justify-between p-4">
 					<a href="/" hx-get="/">Xallery</a>
 					<a
 						href="https://github.com/giridhar7632/Gallery"
@@ -50,46 +47,95 @@
 					class="flex flex-col gap-4 items-center justify-center max-w-xl mx-auto"
 					hx-request='{"noHeaders": true}'
 					hx-encoding="multipart/form-data"
-					hx-post="/uploadImage"
+					hx-post="/uploadImageHTML"
+					hx-target="#gallery-container"
+					hx-swap="afterbegin"
+					hx-on:htmx:before-request="readyForm()"
+					hx-on:htmx:after-request="resetForm()"
 				>
 					<div
-						class="relative flex flex-col items-center w-full bg-neutral-100 rounded-xl min-h-12 border-2 border-dashed border-neutral-200 shadow-sm bg-blur-xl p-4"
+						id="input-container"
+						class="relative flex flex-col items-center w-full bg-neutral-100 rounded-xl min-h-12 border-2 border-dashed border-neutral-200 shadow-sm bg-blur-xl p-4 text-neutral-500"
 					>
 						<input
 							id="upload"
 							type="file"
 							name="file"
+							accept="image/*"
 							class="absolute top-0 left-0 right-0 bottom-0 opacity-0 cursor-pointer"
 						/>
-						<span class="text-neutral-500">Select image to upload</span>
-					</div>
-					<div id="image-preview"></div>
-					<button
-						type="submit"
-						class="flex items-center bg-neutral-100 rounded-xl shadow-sm bg-blur-xl px-4 py-2 border border-neutral-200 hover:ring-2 hover:ring-neutral-200 transition-all duration-300 ease-in-out"
-					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
+							width="48"
+							height="48"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="mr-2 w-4 h-4"
+							class="mb-4 w-8 h-8"
 						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 							<polyline points="17 8 12 3 7 8" />
 							<line x1="12" x2="12" y1="3" y2="15" />
 						</svg>
+						<span>Select image to upload</span>
+					</div>
+					<div id="image-preview"></div>
+					<button
+						type="submit"
+						id="submit"
+						disabled="true"
+						class="flex items-center bg-neutral-100 rounded-xl shadow-sm bg-blur-xl px-4 py-2 border border-neutral-200 hover:ring-2 hover:ring-neutral-200 transition-all duration-300 ease-in-out"
+					>
 						Upload image
 					</button>
-					<progress id="progress" value="0" max="100"></progress>
 				</form>
+
+				<ul
+					class="my-6 md:my-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-max auto-cols-max"
+					hx-trigger="load"
+					hx-get="/getImagesHTML"
+					hx-target="#gallery-items"
+					hx-swap="outerHTML"
+					id="gallery-container"
+				>
+					<div
+						id="gallery-items"
+						class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible md:col-span-2 lg:col-span-3"
+					>
+						<svg
+							class="text-gray-300 animate-spin"
+							viewBox="0 0 64 64"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+						>
+							<path
+								d="M32 3C35.8083 3 39.5794 3.75011 43.0978 5.20749C46.6163 6.66488 49.8132 8.80101 52.5061 11.4939C55.199 14.1868 57.3351 17.3837 58.7925 20.9022C60.2499 24.4206 61 28.1917 61 32C61 35.8083 60.2499 39.5794 58.7925 43.0978C57.3351 46.6163 55.199 49.8132 52.5061 52.5061C49.8132 55.199 46.6163 57.3351 43.0978 58.7925C39.5794 60.2499 35.8083 61 32 61C28.1917 61 24.4206 60.2499 20.9022 58.7925C17.3837 57.3351 14.1868 55.199 11.4939 52.5061C8.801 49.8132 6.66487 46.6163 5.20749 43.0978C3.7501 39.5794 3 35.8083 3 32C3 28.1917 3.75011 24.4206 5.2075 20.9022C6.66489 17.3837 8.80101 14.1868 11.4939 11.4939C14.1868 8.80099 17.3838 6.66487 20.9022 5.20749C24.4206 3.7501 28.1917 3 32 3L32 3Z"
+								stroke="currentColor"
+								stroke-width="5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+							<path
+								d="M32 3C36.5778 3 41.0906 4.08374 45.1692 6.16256C49.2477 8.24138 52.7762 11.2562 55.466 14.9605C58.1558 18.6647 59.9304 22.9531 60.6448 27.4748C61.3591 31.9965 60.9928 36.6232 59.5759 40.9762"
+								stroke="currentColor"
+								stroke-width="5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="text-gray-900"
+							></path>
+						</svg>
+					</div>
+				</ul>
+
 				<script>
 					htmx.on('#upload', 'change', (evt) => {
+						const btn = htmx.find('#submit')
+						btn.removeAttribute('disabled')
 						const file = evt.target.files[0]
 						if (file) {
 							const reader = new FileReader()
@@ -102,14 +148,20 @@
 						}
 					})
 
-					htmx.on('#form', 'htmx:xhr:progress', (evt) => {
-						htmx
-							.find('#progress')
-							.setAttribute(
-								'value',
-								(evt.detail.loaded / evt.detail.total) * 100
-							)
-					})
+					function readyForm() {
+						const btn = htmx.find('#submit')
+						btn.innerHTML = 'Uploading...'
+						btn.setAttribute('disabled', true)
+						htmx.find('#input-container').classList.add('hidden')
+					}
+
+					function resetForm() {
+						const btn = htmx.find('#submit')
+						btn.innerHTML = 'Upload image'
+						btn.removeAttribute('disabled')
+						htmx.find('#image-preview').innerHTML = ''
+						htmx.find('#input-container').classList.remove('hidden')
+					}
 				</script>
 			</main>
 		</div>

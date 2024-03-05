@@ -20,6 +20,23 @@ export async function onRequest({ request, env }) {
 			status: 400,
 		})
 	} else {
-		return new Response('Uploaded! 🎉')
+		const aspectRatio = data.width / data.height
+
+		return new Response(`
+    <li class='min-w-full md:min-w-1/2 lg:min-w-1/3 min-h-80 ${
+			aspectRatio > 1.7
+				? 'md:col-span-2'
+				: aspectRatio < 0.6
+				? 'md:row-span-2'
+				: ''
+		}'><a href=${data.secure_url} target="_blank">
+    <img
+			id=${data.public_id}
+			src=${data.secure_url}
+      alt=${data.public_id}
+      class='w-full h-full object-cover rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition duration-300 ease-in-out'
+		/>
+    </a>
+    </li>`)
 	}
 }
