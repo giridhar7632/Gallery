@@ -21,7 +21,7 @@ export async function onRequest({ request, env }) {
 		class:
 			aspectRatio > 1.7
 				? 'md:col-span-2'
-				: aspectRatio < 0.6
+				: aspectRatio < 0.7
 				? 'md:row-span-2'
 				: '',
 	}
