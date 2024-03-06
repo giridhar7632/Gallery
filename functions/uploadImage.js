@@ -14,12 +14,24 @@ export async function onRequest({ request, env }) {
 		},
 	})
 	const data = await res.json()
+	const aspectRatio = data.width / data.height
+	const image = {
+		id: data.public_id,
+		url: data.secure_url,
+		class:
+			aspectRatio > 1.7
+				? 'md:col-span-2'
+				: aspectRatio < 0.6
+				? 'md:row-span-2'
+				: '',
+	}
 
 	if (data.error) {
-		return new Response(data.error.message, {
-			status: 400,
+		return Response.json({
+			id: data.error.message,
+			url: 'https://raw.githubusercontent.com/giridhar7632/Gallery/main/error.gif',
 		})
 	} else {
-		return new Response('Uploaded! 🎉')
+		return Response.json(image)
 	}
 }

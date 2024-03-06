@@ -8,15 +8,18 @@ export async function onRequest({ env }) {
 
 	const { resources } = await res.json()
 	const data = resources.map((i) => {
+		const aspectRatio = i.width / i.height
 		return {
 			id: i.public_id,
-			url: i.url,
+			url: i.secure_url,
+			class:
+				aspectRatio > 1.7
+					? 'md:col-span-2'
+					: aspectRatio < 0.6
+					? 'md:row-span-2'
+					: '',
 		}
 	})
 
-	return new Response(data, {
-		headers: {
-			'content-type': 'application/json',
-		},
-	})
+	return Response.json(data)
 }
