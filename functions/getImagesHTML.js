@@ -1,23 +1,31 @@
-export async function onRequest({ env }) {
-	const url = `https://api.cloudinary.com/v1_1/${env.CLOUD_NAME}/resources/image`
+export async function onRequest({ request, env }) {
+	const cursor = new URL(request.url).searchParams.get('nextcursor') || ''
+	const url = `https://api.cloudinary.com/v1_1/${env.CLOUD_NAME}/resources/image?max_results=10&next_cursor=${cursor}`
 	const res = await fetch(url, {
 		headers: {
 			Authorization: `Basic ${env.AUTH_HEADER}`,
 		},
 	})
 
-	const { resources } = await res.json()
+	const { resources, next_cursor } = await res.json()
 	let data = ''
-	resources.forEach((i) => {
+	resources?.forEach((i, idx) => {
 		const aspectRatio = i.width / i.height
-		data += `
-    <li class='min-w-full md:min-w-1/2 lg:min-w-1/3 min-h-80 ${
+		const isLastItem = idx === resources.length - 1
+
+		let attrs = `class='min-w-full md:min-w-1/2 lg:min-w-1/3 min-h-80 ${
 			aspectRatio > 1.7
 				? 'md:col-span-2'
-				: aspectRatio < 0.6
+				: aspectRatio < 0.7
 				? 'md:row-span-2'
 				: ''
-		}'><a href=${i.secure_url} target="_blank">
+		}'`
+
+		if (isLastItem && next_cursor) {
+			attrs += ` hx-get="/getImagesHTML?nextcursor=${next_cursor}" hx-trigger="revealed" hx-swap="afterend"`
+		}
+		data += `
+    <li ${attrs}><a href=${i.secure_url} target="_blank">
     <img
 			id=${i.public_id}
 			src=${i.secure_url}

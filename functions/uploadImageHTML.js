@@ -26,7 +26,7 @@ export async function onRequest({ request, env }) {
     <li class='min-w-full md:min-w-1/2 lg:min-w-1/3 min-h-80 ${
 			aspectRatio > 1.7
 				? 'md:col-span-2'
-				: aspectRatio < 0.6
+				: aspectRatio < 0.7
 				? 'md:row-span-2'
 				: ''
 		}'><a href=${data.secure_url} target="_blank">
