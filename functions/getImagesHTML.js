@@ -1,9 +1,13 @@
+import { Buffer } from 'node:buffer'
+
 export async function onRequest({ request, env }) {
 	const cursor = new URL(request.url).searchParams.get('nextcursor') || ''
-	const url = `https://api.cloudinary.com/v1_1/${env.CLOUD_NAME}/resources/image?max_results=10&next_cursor=${cursor}`
+	const url = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/resources/image?max_results=10&next_cursor=${cursor}`
 	const res = await fetch(url, {
 		headers: {
-			Authorization: `Basic ${env.AUTH_HEADER}`,
+			Authorization: `Basic ${Buffer.from(
+				env.CLOUDINARY_API_KEY + ':' + env.CLOUDINARY_API_SECRET
+			).toString('base64')}`,
 		},
 	})
 

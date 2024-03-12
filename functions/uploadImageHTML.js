@@ -1,17 +1,12 @@
 export async function onRequest({ request, env }) {
 	const formData = await request.formData()
+	formData.append('upload_preset', env.CLOUDINARY_UPLOAD_PRESET)
 
-	const url = `https://api.cloudinary.com/v1_1/${env.CLOUD_NAME}/image/upload`
-	const newformData = new FormData()
-	newformData.append('file', formData.get('file'))
-	newformData.append('upload_preset', env.UPLOAD_PRESET)
+	const url = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/image/upload`
 
 	const res = await fetch(url, {
 		method: 'POST',
-		body: newformData,
-		headers: {
-			Authorization: `Basic ${env.AUTH_HEADER}`,
-		},
+		body: formData,
 	})
 	const data = await res.json()
 
